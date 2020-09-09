@@ -20,7 +20,7 @@ const settings = {
   speed: 3,
 };
 
-function startGame() {
+ const startGame = () => {
   start.classList.add('hide');
   // Меняем статус игры в объекте
   settings.start = true;
@@ -30,7 +30,7 @@ function startGame() {
   requestAnimationFrame(playGame);
 }
 
-function playGame() {
+ const playGame = () => {
   console.log('Play game!');
   // Делаем рекурсию, чтобы движения были плавными
   if(settings.start) {
@@ -38,12 +38,16 @@ function playGame() {
   }
 }
 
-function startRun(event) {
-  event.preventDefault();
-  // Если нажали вправо, наш автомобиль и поедет вправо
-  keys[event.key] = true;
+ const startRun = (event) => {
+  // Условие, чтобы старница обновлялась на f5
+  if (event.key !== F5 && event.key !== F12) {
+    event.preventDefault();
+    // Если нажали вправо, наш автомобиль и поедет вправо
+    keys[event.key] = true;
+  
+  }
 }
-function stopRun(event) {
+ const stopRun = (event) => {
   event.preventDefault();
   // Когда отпускаем кнопку, автомобиль перестает ехать
   keys[event.key] = false;

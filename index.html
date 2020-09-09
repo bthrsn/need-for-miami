@@ -7,6 +7,10 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
     <link rel="manifest" href="favicon/site.webmanifest">
+    <!-- Чтобы у пользователей с медленным интернетом скрипты гразуились раньше -->
+    <!-- Чтобы они не грузились раньше верстки используй defer -->
+    <script src="main.js" defer></script>
+
   </head>
 
   <body>
@@ -16,7 +20,6 @@
       <div class="gameArea"></div>
     </div>
 
-    <script src="main.js"></script>
   </body>
 
 </html>
