@@ -24,13 +24,13 @@ const settings = {
 // Функци вычисления количества полос на дороге
 const getQuantityElements = (heightElement) =>  document.documentElement.clientHeight / heightElement + 1;
 
- const startGame = () => {
+const startGame = () => {
   start.classList.add('hide');
   // Цикл для создания линий на дороге
   for(let i = 0; i < getQuantityElements(100); i++) {
     const line = document.createElement('div');
     line.classList.add('line');
-    line.style.top = (i * 100) + 'px';
+    line.style.top = `${i * 100}px`;
     // Свойство y и его значение для функции движения полос
     line.y = i * 100;
     gameArea.appendChild(line);
@@ -41,7 +41,7 @@ const getQuantityElements = (heightElement) =>  document.documentElement.clientH
     const enemy = document.createElement('div');
     enemy.classList.add('enemy');
     enemy.y = -100 * settings.traffic * (i + 1);
-    enemy.style.top = enemy.y + 'px';
+    enemy.style.top = `${enemy.y}px`;
     enemy.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - 50)) + 'px';
     gameArea.appendChild(enemy);
   }
@@ -65,7 +65,7 @@ const moveRoad = () => {
   let lines = document.querySelectorAll('.line');
   lines.forEach(line=> {
     line.y += settings.speed;
-    line.style.top = line.y + 'px';
+    line.style.top = `${line.y}px`;
     
     // Возвращаем первые линии обратно
     if(line.y >= document.documentElement.clientHeight) {
@@ -79,7 +79,7 @@ const moveEnemy = () => {
   let enemy = document.querySelectorAll('.enemy');
   enemy.forEach(item => {
     item.y += settings.speed / 2;
-    item.style.top = item.y + 'px';
+    item.style.top = `${item.y}px`;
 
     // Возвращаем первые машины обратно
     if(item.y >= document.documentElement.clientHeight) {
@@ -89,7 +89,7 @@ const moveEnemy = () => {
   });
 };
 
- const playGame = () => {
+const playGame = () => {
   // Делаем рекурсию, чтобы движения были плавными
   if(settings.start) {
     moveRoad();
@@ -110,24 +110,27 @@ const moveEnemy = () => {
     }
 
     // Чтобы верхнее условие заработало - добавляем значение settings.x и y в стили
-    car.style.left = settings.x + 'px';
-    car.style.top = settings.y + 'px';
+    car.style.left = `${settings.x}px`;
+    car.style.top = `${settings.y}px`;
     requestAnimationFrame(playGame);
   }
 }
 
- const startRun = (event) => {
-  // Условие, чтобы старница обновлялась на f5
-  if (event.key !== 'F5' && event.key !== 'F12') {
+const startRun = (event) => {
+  // Условие, чтобы в объект keys не добавлялись новые свойства
+  if(keys.hasOwnProperty(event.key)) {
     event.preventDefault();
     // Если нажали вправо, наш автомобиль и поедет вправо
     keys[event.key] = true;  
   }
 }
- const stopRun = (event) => {
-  event.preventDefault();
-  // Когда отпускаем кнопку, автомобиль перестает ехать
-  keys[event.key] = false;
+
+const stopRun = (event) => {
+  if(keys.hasOwnProperty(event.key)) {
+    event.preventDefault();
+    // Когда отпускаем кнопку, автомобиль перестает ехать
+    keys[event.key] = false;
+  }
 }
 
 start.addEventListener('click', startGame);
