@@ -47,6 +47,21 @@ table {
   display: none;
 }
 
+.start {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  margin: 0;
+  padding: 2rem 0;
+  text-align: center;
+  z-index: 200;
+  color: #fff;
+  font-size: 1.5rem;
+  background: #000000;
+}
+
+
 .car, .enemy{
   width: 50px;
   height: 100px;

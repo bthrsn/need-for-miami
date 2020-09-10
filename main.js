@@ -15,19 +15,20 @@ const MAX_ENEMY = 7;
 const score = document.querySelector('.score'),
       start = document.querySelector('.start'),
       gameArea = document.querySelector('.gameArea'),
-      car = document.createElement('div');
+      // Создаем машину
+      car = document.createElement('div'),
+      // Создаем музыкальное сопровождение
+      audio = document.createElement('audio');
 
-// Создаем элемент для аудио, embed используется и для видео и для флэш
-const audio = document.createElement('audio');
-audio.src = 'audio.mp3';
-audio.volume = 0.5;
-// audio.type = 'audio/mp3';
-audio.style.cssText = `
-  position: absolute;
-  top: -1000px;
-`;
+  car.classList.add('car');
 
-car.classList.add('car');
+  audio.src = 'audio.mp3';
+  audio.volume = 0.5;
+  // audio.type = 'audio/mp3';
+  audio.style.cssText = `
+    position: absolute;
+    top: -1000px;
+  `;
 
 // Объект для управления автомобилем
 const keys = {
@@ -43,6 +44,7 @@ const getQuantityElements = (heightElement) =>  document.documentElement.clientH
 const startGame = () => {
   audio.play();
   start.classList.add('hide');
+
   // Цикл для создания линий на дороге
   for(let i = 0; i < getQuantityElements(100); i++) {
     const line = document.createElement('div');
@@ -61,6 +63,7 @@ const startGame = () => {
     enemy.y = -100 * SETTINGS.traffic * (i + 1);
     enemy.style.top = `${enemy.y}px`;
     enemy.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - 50)) + 'px';
+    // В игру добавляем азные модели машинок
     enemy.style.background = `transparent url('./image/enemy${randomEnemy}.png') center / cover no-repeat`;
 
     gameArea.append(enemy);
@@ -71,7 +74,7 @@ const startGame = () => {
 
   // Добавляем машину
   gameArea.append(car);
-  // Добавляем звук
+  // Добавляем музыку
   gameArea.append(audio);
 
   // Для манипулирования css свойством left
@@ -98,8 +101,24 @@ const moveRoad = () => {
 
 // Функция для создания других машин
 const moveEnemy = () => {
+
+  // Добавляем встречные машины на страницу
   let enemy = document.querySelectorAll('.enemy');
   enemy.forEach(item => {
+    // Здесь объявим переменные, которые получают свойства размеров и позицию машин
+    let carRect = car.getBoundingClientRect();
+    let enemyRect = item.getBoundingClientRect();
+
+    // Условия для столкновения
+    if  (carRect.top <= enemyRect.bottom && 
+      carRect.right >= enemyRect.left && 
+      carRect.left <= enemyRect.right && 
+      carRect.bottom >= enemyRect.top) {
+        SETTINGS.start = false;
+        audio.pause();
+        alert('CRASH!');    
+      }
+
     item.y += SETTINGS.speed / 2;
     item.style.top = `${item.y}px`;
 
