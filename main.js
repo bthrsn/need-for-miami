@@ -1,7 +1,31 @@
+// Сначала объявляются переменный для игры
+
+// Объект для статуса игры, подсчета очков и остановки игры
+const SETTINGS = {
+  start: false,
+  score: 0,
+  speed: 3,
+  traffic: 3,
+};
+
+// Максимальное количество встречных машин
+const MAX_ENEMY = 7;
+
+// Потом переменные с данными со страницы
 const score = document.querySelector('.score'),
       start = document.querySelector('.start'),
       gameArea = document.querySelector('.gameArea'),
       car = document.createElement('div');
+
+// Создаем элемент для аудио, embed используется и для видео и для флэш
+const audio = document.createElement('audio');
+audio.src = 'audio.mp3';
+audio.volume = 0.5;
+// audio.type = 'audio/mp3';
+audio.style.cssText = `
+  position: absolute;
+  top: -1000px;
+`;
 
 car.classList.add('car');
 
@@ -13,18 +37,11 @@ const keys = {
   ArrowLeft: false,
 };
 
-// Объект для статуса игры, подсчета очков и остановки игры
-const settings = {
-  start: false,
-  score: 0,
-  speed: 3,
-  traffic: 3,
-};
-
 // Функци вычисления количества полос на дороге
 const getQuantityElements = (heightElement) =>  document.documentElement.clientHeight / heightElement + 1;
 
 const startGame = () => {
+  audio.play();
   start.classList.add('hide');
   // Цикл для создания линий на дороге
   for(let i = 0; i < getQuantityElements(100); i++) {
@@ -33,28 +50,33 @@ const startGame = () => {
     line.style.top = `${i * 100}px`;
     // Свойство y и его значение для функции движения полос
     line.y = i * 100;
-    gameArea.appendChild(line);
+    gameArea.append(line);
   }
 
   // Цикл для создания машин на дороге
-  for (let i = 0; i < getQuantityElements(100 * settings.traffic); i++) {
+  for (let i = 0; i < getQuantityElements(100 * SETTINGS.traffic); i++) {
     const enemy = document.createElement('div');
+    const randomEnemy = Math.floor(Math.random() * MAX_ENEMY + 1);
     enemy.classList.add('enemy');
-    enemy.y = -100 * settings.traffic * (i + 1);
+    enemy.y = -100 * SETTINGS.traffic * (i + 1);
     enemy.style.top = `${enemy.y}px`;
     enemy.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - 50)) + 'px';
-    gameArea.appendChild(enemy);
+    enemy.style.background = `transparent url('./image/enemy${randomEnemy}.png') center / cover no-repeat`;
+
+    gameArea.append(enemy);
   }
 
   // Меняем статус игры в объекте
-  settings.start = true;
+  SETTINGS.start = true;
 
   // Добавляем машину
   gameArea.append(car);
+  // Добавляем звук
+  gameArea.append(audio);
 
   // Для манипулирования css свойством left
-  settings.x = car.offsetLeft;
-  settings.y = car.offsetTop;
+  SETTINGS.x = car.offsetLeft;
+  SETTINGS.y = car.offsetTop;
 
   // Специальная функция в js для анимации
   requestAnimationFrame(playGame);
@@ -64,7 +86,7 @@ const startGame = () => {
 const moveRoad = () => {
   let lines = document.querySelectorAll('.line');
   lines.forEach(line=> {
-    line.y += settings.speed;
+    line.y += SETTINGS.speed;
     line.style.top = `${line.y}px`;
     
     // Возвращаем первые линии обратно
@@ -78,40 +100,43 @@ const moveRoad = () => {
 const moveEnemy = () => {
   let enemy = document.querySelectorAll('.enemy');
   enemy.forEach(item => {
-    item.y += settings.speed / 2;
+    item.y += SETTINGS.speed / 2;
     item.style.top = `${item.y}px`;
 
     // Возвращаем первые машины обратно
     if(item.y >= document.documentElement.clientHeight) {
-      item.y = -100 * settings.traffic;
+      item.y = -100 * SETTINGS.traffic;
       item.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - 50)) + 'px';
+      // Делаем так, чтобы машинки постоянно менялись
+      const randomEnemy = Math.floor(Math.random() * MAX_ENEMY + 1);
+      item.style.background = `transparent url('./image/enemy${randomEnemy}.png') center / cover no-repeat`;
     }
   });
 };
 
 const playGame = () => {
   // Делаем рекурсию, чтобы движения были плавными
-  if(settings.start) {
+  if(SETTINGS.start) {
     moveRoad();
     moveEnemy();
 
     // Условия дл передвижения машины
-    if (keys.ArrowLeft && settings.x > 0) {
-      settings.x -= settings.speed;
+    if (keys.ArrowLeft && SETTINGS.x > 0) {
+      SETTINGS.x -= SETTINGS.speed;
     }
-    if (keys.ArrowRight  && settings.x < (gameArea.offsetWidth - car.offsetWidth)) {
-      settings.x += settings.speed;
+    if (keys.ArrowRight  && SETTINGS.x < (gameArea.offsetWidth - car.offsetWidth)) {
+      SETTINGS.x += SETTINGS.speed;
     }
-    if (keys.ArrowDown  && settings.y < (gameArea.offsetHeight - car.offsetHeight)) {
-      settings.y += settings.speed;
+    if (keys.ArrowDown  && SETTINGS.y < (gameArea.offsetHeight - car.offsetHeight)) {
+      SETTINGS.y += SETTINGS.speed;
     }
-    if (keys.ArrowUp && settings.y > 0) {
-      settings.y -= settings.speed;
+    if (keys.ArrowUp && SETTINGS.y > 0) {
+      SETTINGS.y -= SETTINGS.speed;
     }
 
-    // Чтобы верхнее условие заработало - добавляем значение settings.x и y в стили
-    car.style.left = `${settings.x}px`;
-    car.style.top = `${settings.y}px`;
+    // Чтобы верхнее условие заработало - добавляем значение SETTINGS.x и y в стили
+    car.style.left = `${SETTINGS.x}px`;
+    car.style.top = `${SETTINGS.y}px`;
     requestAnimationFrame(playGame);
   }
 }

@@ -51,15 +51,13 @@ table {
   width: 50px;
   height: 100px;
   position: absolute;
-  transform: rotate(180deg);
+  background: transparent url('./image/new-player.png') center / cover no-repeat;
   left: 125px;
   bottom: 10px;
 }
+/* Если используем перевернутую картинку */
 .car {
-  background: transparent url('./image/new-player.png') center / cover no-repeat;
-}
-.enemy {
-  background: transparent url('./image/new-enemy.png') center / cover no-repeat;
+  transform: rotate(180deg);
 }
 
 .gameArea {
