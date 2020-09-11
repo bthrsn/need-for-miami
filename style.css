@@ -47,32 +47,89 @@ table {
   display: none;
 }
 
+body {
+  background: url('./image/background.jpg') center / cover no-repeat;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1050;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, .5)
+}
+.modal-menu {
+  widows: 100%;
+  margin-top: 250px;
+  text-align: center;
+  background: rgb(168, 162, 162);
+}
 .start {
-  position: absolute;
+  display: inline-block;
+  width: 250px;
+  height: 50px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 50px;
+  position: relative;
+  /* Закомментил стили из урока */
+  /* position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   margin: 0;
-  padding: 2rem 0;
+  padding: 2rem 0; */
   text-align: center;
+  padding: 5px;
   z-index: 200;
-  color: #fff;
+  color: #000;
   font-size: 1.5rem;
-  background: #000000;
+  background: #0091a9;
+  cursor: pointer;
+  font-family: sans-serif;
+  font-weight: 700;
+}
+.start-inner {
+  padding: 10px;
+  border: 2px solid #000;
 }
 
+.start-easy {
+  background-image: url('./image/easy.png');
+  background-repeat: no-repeat;
+  background-position: 30px;
+  background-size: 35px;
+}
+.start-normal {
+  background-image: url('./image/normal.png');
+  background-repeat: no-repeat;
+  background-position: 30px;
+  background-size: 40px;}
+.start-hard {
+  background-image: url('./image/hard.png');
+  background-repeat: no-repeat;
+  background-position: 30px;
+  background-size: 30px;}
 
 .car, .enemy{
   width: 50px;
   height: 100px;
   position: absolute;
   background: transparent url('./image/new-player.png') center / cover no-repeat;
-  left: 125px;
-  bottom: 10px;
 }
 /* Если используем перевернутую картинку */
 .car {
   transform: rotate(180deg);
+}
+
+.game {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .gameArea {
@@ -91,3 +148,30 @@ table {
   background: #fff;
   left: 145px;
 }
+
+.score {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #000;
+  padding: 1rem 0;
+  z-index: 200;
+  font-size: 1.5rem;
+  color: skyblue;
+  text-align: center;
+  font-family: sans-serif;
+  font-weight: 500;
+}
+
+@media (max-width: 960px) {
+  .modal-menu {
+    margin-top: 80px;
+    padding: 10px 0;
+  }
+  .start {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+ }

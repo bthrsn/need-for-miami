@@ -4,16 +4,32 @@
 const SETTINGS = {
   start: false,
   score: 0,
-  speed: 3,
-  traffic: 3,
+  speed: 10,
+  traffic: 2,
 };
+// Объект для выбора сложности трафика
+const TRAFFIC = {
+  easy: 5,
+  normal: 3,
+  hard: 2,
+};
+// Объект для выбора сложности скорости
+const SPEED = {
+  easy: 3,
+  normal: 7,
+  hard: 10,
+}
 
 // Максимальное количество встречных машин
-const MAX_ENEMY = 7;
+const MAX_ENEMY = 9;
+// Часто есть в размерах высоты - зададим как переменную
+const HEIGHT_ELEM = 100;
 
 // Потом переменные с данными со страницы
 const score = document.querySelector('.score'),
-      start = document.querySelector('.start'),
+      modal = document.querySelector('.modal'),
+      // menu = document.querySelector('.modal-menu'), 
+      start = document.querySelectorAll('.start'),
       gameArea = document.querySelector('.gameArea'),
       // Создаем машину
       car = document.createElement('div'),
@@ -21,10 +37,11 @@ const score = document.querySelector('.score'),
       audio = document.createElement('audio');
 
   car.classList.add('car');
+  gameArea.classList.add('hide');
+  score.classList.add('hide');
 
   audio.src = 'audio.mp3';
   audio.volume = 0.5;
-  // audio.type = 'audio/mp3';
   audio.style.cssText = `
     position: absolute;
     top: -1000px;
@@ -38,42 +55,60 @@ const keys = {
   ArrowLeft: false,
 };
 
+// Жестко задаем высоту для поля, чтоббы полосы на дороге не слеплялись
+const countSection = Math.floor(document.documentElement.clientHeight / HEIGHT_ELEM);
+gameArea.style.height = countSection * HEIGHT_ELEM;
+
 // Функци вычисления количества полос на дороге
-const getQuantityElements = (heightElement) =>  document.documentElement.clientHeight / heightElement + 1;
+const getQuantityElements = (heightElement) =>  (gameArea.offsetHeight / heightElement) + 1;
 
 const startGame = () => {
   audio.play();
-  start.classList.add('hide');
+  modal.classList.add('hide');  
+
+  // Очищаем поле перед началом игры
+  gameArea.innerHTML = '';
+  gameArea.classList.remove('hide');
+  score.classList.remove('hide');
 
   // Цикл для создания линий на дороге
-  for(let i = 0; i < getQuantityElements(100); i++) {
+  for(let i = 0; i < getQuantityElements(HEIGHT_ELEM); i++) {
     const line = document.createElement('div');
     line.classList.add('line');
-    line.style.top = `${i * 100}px`;
+    line.style.top = `${i * HEIGHT_ELEM}px`;
     // Свойство y и его значение для функции движения полос
-    line.y = i * 100;
+    line.y = i * HEIGHT_ELEM;
     gameArea.append(line);
   }
 
   // Цикл для создания машин на дороге
-  for (let i = 0; i < getQuantityElements(100 * SETTINGS.traffic); i++) {
+  for (let i = 0; i < getQuantityElements(HEIGHT_ELEM * SETTINGS.traffic); i++) {
     const enemy = document.createElement('div');
     const randomEnemy = Math.floor(Math.random() * MAX_ENEMY + 1);
     enemy.classList.add('enemy');
-    enemy.y = -100 * SETTINGS.traffic * (i + 1);
+    enemy.y = -HEIGHT_ELEM * SETTINGS.traffic * (i + 1);
     enemy.style.top = `${enemy.y}px`;
-    enemy.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - 50)) + 'px';
+    enemy.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - enemy.offsetWidth)) + 'px';
     // В игру добавляем азные модели машинок
     enemy.style.background = `transparent url('./image/enemy${randomEnemy}.png') center / cover no-repeat`;
 
     gameArea.append(enemy);
   }
 
+  // Подсчет очков
+  SETTINGS.score = 0;
+  // localStorage.setItem('score', 0);
   // Меняем статус игры в объекте
   SETTINGS.start = true;
 
   // Добавляем машину
   gameArea.append(car);
+  car.style.cssText = `
+  left: ${gameArea.offsetWidth / 2 - car.offsetWidth / 2}px;
+  top: auto;
+  bottom: 10px
+  `;
+
   // Добавляем музыку
   gameArea.append(audio);
 
@@ -93,8 +128,8 @@ const moveRoad = () => {
     line.style.top = `${line.y}px`;
     
     // Возвращаем первые линии обратно
-    if(line.y >= document.documentElement.clientHeight) {
-      line.y = -100;
+    if(line.y >= gameArea.offsetHeight) {
+      line.y = -HEIGHT_ELEM;
     }
   })
 }
@@ -110,22 +145,29 @@ const moveEnemy = () => {
     let enemyRect = item.getBoundingClientRect();
 
     // Условия для столкновения
+    // Если точки соприкосновения далеко - уменьшить или увеличить на несколько пикселей выражения
     if  (carRect.top <= enemyRect.bottom && 
       carRect.right >= enemyRect.left && 
       carRect.left <= enemyRect.right && 
       carRect.bottom >= enemyRect.top) {
         SETTINGS.start = false;
         audio.pause();
-        alert('CRASH!');    
+        modal.classList.remove('hide');
+        // score.style.top = start.offsetHeight;
+        // Запись в localStorage
+        if (localStorage.getItem('score') < SETTINGS.score) {
+          localStorage.setItem('score', SETTINGS.score);
+          score.innerHTML = `SCORE:${SETTINGS.score}<br>YOU GOT A NEW RECORD!`;
+        }
       }
 
     item.y += SETTINGS.speed / 2;
     item.style.top = `${item.y}px`;
 
     // Возвращаем первые машины обратно
-    if(item.y >= document.documentElement.clientHeight) {
-      item.y = -100 * SETTINGS.traffic;
-      item.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - 50)) + 'px';
+    if(item.y >= gameArea.offsetHeight) {
+      item.y = -HEIGHT_ELEM * SETTINGS.traffic;
+      item.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - enemy.offsetWidth)) + 'px';
       // Делаем так, чтобы машинки постоянно менялись
       const randomEnemy = Math.floor(Math.random() * MAX_ENEMY + 1);
       item.style.background = `transparent url('./image/enemy${randomEnemy}.png') center / cover no-repeat`;
@@ -136,6 +178,9 @@ const moveEnemy = () => {
 const playGame = () => {
   // Делаем рекурсию, чтобы движения были плавными
   if(SETTINGS.start) {
+    SETTINGS.score += SETTINGS.speed;
+    score.innerHTML = `SCORE<br>${SETTINGS.score}`;
+    score.style.top = '0';
     moveRoad();
     moveEnemy();
 
@@ -177,7 +222,15 @@ const stopRun = (event) => {
   }
 }
 
-start.addEventListener('click', startGame);
+start.forEach(button => button.addEventListener('click', startGame));
+
+// Изменяем сложность = traffic в настройках
+start.forEach(button => button.addEventListener('click', (e) => {
+  const changeDifficulty = e.target.getAttribute('data-difficulty');
+  console.log(changeDifficulty);
+//   // SETTINGS.setAttribute('traffic', changeDifficulty);
+//   // console.log(SETTINGS.traffic);
+}));
+
 document.addEventListener('keydown', startRun);
 document.addEventListener('keyup', stopRun);
-
