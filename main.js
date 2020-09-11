@@ -5,7 +5,7 @@ const SETTINGS = {
   start: false,
   score: 0,
   speed: 10,
-  traffic: 2,
+  traffic: 3,
 };
 // Объект для выбора сложности трафика
 const TRAFFIC = {
@@ -21,7 +21,7 @@ const SPEED = {
 }
 
 // Максимальное количество встречных машин
-const MAX_ENEMY = 9;
+const MAX_ENEMY = 8;
 // Часто есть в размерах высоты - зададим как переменную
 const HEIGHT_ELEM = 100;
 
@@ -63,6 +63,7 @@ gameArea.style.height = countSection * HEIGHT_ELEM;
 const getQuantityElements = (heightElement) =>  (gameArea.offsetHeight / heightElement) + 1;
 
 const startGame = () => {
+  
   audio.play();
   modal.classList.add('hide');  
 
@@ -76,6 +77,7 @@ const startGame = () => {
     const line = document.createElement('div');
     line.classList.add('line');
     line.style.top = `${i * HEIGHT_ELEM}px`;
+    line.style.height = `${HEIGHT_ELEM / 2}px`;
     // Свойство y и его значение для функции движения полос
     line.y = i * HEIGHT_ELEM;
     gameArea.append(line);
@@ -86,13 +88,13 @@ const startGame = () => {
     const enemy = document.createElement('div');
     const randomEnemy = Math.floor(Math.random() * MAX_ENEMY + 1);
     enemy.classList.add('enemy');
+
     enemy.y = -HEIGHT_ELEM * SETTINGS.traffic * (i + 1);
     enemy.style.top = `${enemy.y}px`;
-    enemy.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - enemy.offsetWidth)) + 'px';
-    // В игру добавляем азные модели машинок
+    // В игру добавляем разные модели машинок
     enemy.style.background = `transparent url('./image/enemy${randomEnemy}.png') center / cover no-repeat`;
-
     gameArea.append(enemy);
+    enemy.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - enemy.offsetWidth)) + 'px';
   }
 
   // Подсчет очков
@@ -167,7 +169,7 @@ const moveEnemy = () => {
     // Возвращаем первые машины обратно
     if(item.y >= gameArea.offsetHeight) {
       item.y = -HEIGHT_ELEM * SETTINGS.traffic;
-      item.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - enemy.offsetWidth)) + 'px';
+      item.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - item.offsetWidth)) + 'px';
       // Делаем так, чтобы машинки постоянно менялись
       const randomEnemy = Math.floor(Math.random() * MAX_ENEMY + 1);
       item.style.background = `transparent url('./image/enemy${randomEnemy}.png') center / cover no-repeat`;
@@ -224,13 +226,13 @@ const stopRun = (event) => {
 
 start.forEach(button => button.addEventListener('click', startGame));
 
-// Изменяем сложность = traffic в настройках
-start.forEach(button => button.addEventListener('click', (e) => {
-  const changeDifficulty = e.target.getAttribute('data-difficulty');
-  console.log(changeDifficulty);
+// // Изменяем сложность = traffic в настройках
+// start.forEach(button => button.addEventListener('click', (e) => {
+//   const changeDifficulty = e.target.getAttribute('data-difficulty');
+//   console.log(changeDifficulty);
 //   // SETTINGS.setAttribute('traffic', changeDifficulty);
 //   // console.log(SETTINGS.traffic);
-}));
+// }));
 
 document.addEventListener('keydown', startRun);
 document.addEventListener('keyup', stopRun);

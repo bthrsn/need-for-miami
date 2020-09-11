@@ -144,7 +144,6 @@ body {
 .line {
   position: absolute;
   width: 10px;
-  height: 50px;
   background: #fff;
   left: 145px;
 }
