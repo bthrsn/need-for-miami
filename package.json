@@ -1,0 +1,24 @@
+{
+  "name": "need-for-miami",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bthrsn/need-for-miami.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bthrsn/need-for-miami/issues"
+  },
+  "homepage": "https://github.com/bthrsn/need-for-miami#readme",
+  "devDependencies": {
+    "electron": "^10.1.1",
+    "path": "^0.12.7",
+    "url": "^0.11.0"
+  }
+}
