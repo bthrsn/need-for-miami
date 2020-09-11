@@ -1,12 +1,14 @@
-// Сначала объявляются переменный для игры
-
+// Сначала объявляем глобальные переменные для игры
 // Объект для статуса игры, подсчета очков и остановки игры
 const SETTINGS = {
   start: false,
   score: 0,
   speed: 0,
   traffic: 0,
+  level: 0,
 };
+
+let level = SETTINGS.level;
 
 // Максимальное количество встречных машин
 const MAX_ENEMY = 8;
@@ -60,11 +62,11 @@ const startGame = (e) => {
   // } 
 switch (target.id) {
   case'easy':
-    SETTINGS.speed = 3;
+    SETTINGS.speed = 4;
     SETTINGS.traffic = 4;
     break;
   case'medium':
-    SETTINGS.speed = 5;
+    SETTINGS.speed = 6;
     SETTINGS.traffic = 3;
     break;
   case'hard':
@@ -156,11 +158,12 @@ const moveEnemy = () => {
     let enemyRect = item.getBoundingClientRect();
 
     // Условия для столкновения
-    // Если точки соприкосновения далеко - уменьшить или увеличить на несколько пикселей выражения
-    if  (carRect.top <= enemyRect.bottom && 
-      carRect.right >= enemyRect.left && 
-      carRect.left <= enemyRect.right && 
-      carRect.bottom >= enemyRect.top) {
+    // Если точки соприкосновения далеко - уменьшить или увеличить на несколько пикселей выражения - для этого бубдет переменная
+    const pictureBorders = 5;
+    if  ((carRect.top) <= (enemyRect.bottom - pictureBorders) && 
+      (carRect.right) >= (enemyRect.left + pictureBorders) && 
+      (carRect.left) <= (enemyRect.right - pictureBorders) && 
+      (carRect.bottom) >= (enemyRect.top + pictureBorders)) {
         SETTINGS.start = false;
         audio.pause();
         crash.play();
@@ -171,7 +174,7 @@ const moveEnemy = () => {
           localStorage.setItem('score', SETTINGS.score);
           score.innerHTML = `SCORE:${SETTINGS.score}<br>YOU GOT A NEW RECORD!`;
         } else {
-          score.innerHTML = `SCORE:${SETTINGS.score}. TRY HARDER!<br>YOUR LATEST RECORD WAS ${localStorage.getItem('score')}`;
+          score.innerHTML = `SCORE:${SETTINGS.score}. TRY AGAIN!<br>YOUR LATEST RECORD WAS ${localStorage.getItem('score')}`;
         }
       }
 
@@ -190,9 +193,19 @@ const moveEnemy = () => {
 };
 
 const playGame = () => {
+
+  // Условия для смены скорости каждые 1000 очков
+  const levelChangeCondition = 1000;
+  SETTINGS.level = Math.round(SETTINGS.score / levelChangeCondition);
+
+  if (SETTINGS.level !== level) {
+    level = SETTINGS.level;
+    SETTINGS.speed++;
+  }
+
   // Делаем рекурсию, чтобы движения были плавными
   if(SETTINGS.start) {
-    SETTINGS.score += SETTINGS.speed;
+    SETTINGS.score += Math.round(SETTINGS.speed / SETTINGS.traffic);
     score.innerHTML = `SCORE<br>${SETTINGS.score}`;
     score.style.top = '0';
     moveRoad();
