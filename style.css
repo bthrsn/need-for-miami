@@ -97,21 +97,21 @@ body {
   border: 2px solid #000;
 }
 
-.start-easy {
+#easy {
   background-image: url('./image/easy.png');
   background-repeat: no-repeat;
-  background-position: 30px;
+  background-position: 20px;
   background-size: 35px;
 }
-.start-normal {
-  background-image: url('./image/normal.png');
+#medium {
+  background-image: url('./image/medium.png');
   background-repeat: no-repeat;
-  background-position: 30px;
+  background-position: 20px;
   background-size: 40px;}
-.start-hard {
+#hard {
   background-image: url('./image/hard.png');
   background-repeat: no-repeat;
-  background-position: 30px;
+  background-position: 20px;
   background-size: 30px;}
 
 .car, .enemy{

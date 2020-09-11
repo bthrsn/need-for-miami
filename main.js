@@ -4,21 +4,9 @@
 const SETTINGS = {
   start: false,
   score: 0,
-  speed: 10,
-  traffic: 3,
+  speed: 0,
+  traffic: 0,
 };
-// Объект для выбора сложности трафика
-const TRAFFIC = {
-  easy: 5,
-  normal: 3,
-  hard: 2,
-};
-// Объект для выбора сложности скорости
-const SPEED = {
-  easy: 3,
-  normal: 7,
-  hard: 10,
-}
 
 // Максимальное количество встречных машин
 const MAX_ENEMY = 8;
@@ -34,7 +22,8 @@ const score = document.querySelector('.score'),
       // Создаем машину
       car = document.createElement('div'),
       // Создаем музыкальное сопровождение
-      audio = document.createElement('audio');
+      audio = document.createElement('audio'),
+      crash = new Audio('./crash.mp3');
 
   car.classList.add('car');
   gameArea.classList.add('hide');
@@ -62,7 +51,27 @@ gameArea.style.height = countSection * HEIGHT_ELEM;
 // Функци вычисления количества полос на дороге
 const getQuantityElements = (heightElement) =>  (gameArea.offsetHeight / heightElement) + 1;
 
-const startGame = () => {
+const startGame = (e) => {
+
+  // Запускаем игру в зависимости от кнопки сложности
+  const target = e.target;
+  // if (target === start) {
+  //   return;
+  // } 
+switch (target.id) {
+  case'easy':
+    SETTINGS.speed = 3;
+    SETTINGS.traffic = 4;
+    break;
+  case'medium':
+    SETTINGS.speed = 5;
+    SETTINGS.traffic = 3;
+    break;
+  case'hard':
+    SETTINGS.speed = 8;
+    SETTINGS.traffic = 2;
+    break;
+}
   
   audio.play();
   modal.classList.add('hide');  
@@ -154,12 +163,15 @@ const moveEnemy = () => {
       carRect.bottom >= enemyRect.top) {
         SETTINGS.start = false;
         audio.pause();
+        crash.play();
         modal.classList.remove('hide');
         // score.style.top = start.offsetHeight;
         // Запись в localStorage
         if (localStorage.getItem('score') < SETTINGS.score) {
           localStorage.setItem('score', SETTINGS.score);
           score.innerHTML = `SCORE:${SETTINGS.score}<br>YOU GOT A NEW RECORD!`;
+        } else {
+          score.innerHTML = `SCORE:${SETTINGS.score}. TRY HARDER!<br>YOUR LATEST RECORD WAS ${localStorage.getItem('score')}`;
         }
       }
 
@@ -225,14 +237,6 @@ const stopRun = (event) => {
 }
 
 start.forEach(button => button.addEventListener('click', startGame));
-
-// // Изменяем сложность = traffic в настройках
-// start.forEach(button => button.addEventListener('click', (e) => {
-//   const changeDifficulty = e.target.getAttribute('data-difficulty');
-//   console.log(changeDifficulty);
-//   // SETTINGS.setAttribute('traffic', changeDifficulty);
-//   // console.log(SETTINGS.traffic);
-// }));
 
 document.addEventListener('keydown', startRun);
 document.addEventListener('keyup', stopRun);
