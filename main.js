@@ -47,7 +47,8 @@ const keys = {
 };
 
 // Жестко задаем высоту для поля, чтоббы полосы на дороге не слеплялись
-const countSection = Math.floor(document.documentElement.clientHeight / HEIGHT_ELEM);
+const countSection = Math.round(document.documentElement.clientHeight / HEIGHT_ELEM);
+// Тут дорога не на весь экран, потому добавим погрешность вручную
 gameArea.style.height = countSection * HEIGHT_ELEM;
 
 // Функци вычисления количества полос на дороге
@@ -119,7 +120,7 @@ switch (target.id) {
   car.style.cssText = `
   left: ${gameArea.offsetWidth / 2 - car.offsetWidth / 2}px;
   top: auto;
-  bottom: 10px
+  bottom: 40px
   `;
 
   // Добавляем музыку
